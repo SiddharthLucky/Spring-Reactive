@@ -15,4 +15,16 @@ public class BuilderService {
     public Mono<UserInfoDTO> getUserInfoById(Long id) {
         return userInfoBuilder.getUserInfoById(id);
     }
+
+    public Mono<String> insertUserInfo(UserInfoDTO userInfoDTO) {
+        return userInfoBuilder.addUserInfo(userInfoDTO)
+                .flatMap(userInfo -> {
+                    if (userInfo != null) {
+                        return Mono.just("User is added to DB");
+                    } else {
+                        return Mono.just("User isn't inserted");
+                    }
+                })
+                .onErrorReturn("User isn't inserted due to an error");
+    }
 }

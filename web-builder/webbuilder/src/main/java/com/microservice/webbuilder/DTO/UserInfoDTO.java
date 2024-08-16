@@ -1,18 +1,22 @@
 package com.microservice.webbuilder.DTO;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoDTO {
-    private Long id;
+    private Long user_id;
     private String name;
     private String email;
     private String phone;
-    private String address;
+    private AddressDTO address;
+    private Set<TagsDTO> tags;
 }

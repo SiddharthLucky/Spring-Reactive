@@ -30,7 +30,7 @@ public class UserInfoBuilder {
     }
 
     public Mono<String> addUserInfo(UserInfoDTO userInfoDTO) {
-        return userInfoWebClient.put()
+        return userInfoWebClient.post()
                 .uri("/add-user")
                 .exchangeToMono(response -> response.bodyToMono(String.class));
     }
