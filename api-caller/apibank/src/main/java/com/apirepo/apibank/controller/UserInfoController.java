@@ -35,7 +35,7 @@ public class UserInfoController {
         return "User deleted";
     }
 
-    @DeleteMapping(value = "/delete-multiple-users")
+    @DeleteMapping(value = "/delete-multiple-users", consumes = "application/json")
     public String deleteMultipleUsers(@RequestBody List<Long> ids) {
         userInfoService.deleteMultipleUsers(ids);
         return "Multiple users deleted";
