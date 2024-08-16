@@ -14,18 +14,30 @@ public class UserInfoController {
     @Autowired
     private UserInfoService userInfoService;
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = "application/json")
     public UserInfo getUserInfo(@PathVariable Long id) {
         return userInfoService.getUserInfo(id);
     }
 
-    @GetMapping("/all-users")
+    @GetMapping(value = "/all-users", produces = "application/json")
     public List<UserInfo> getAllUsers() {
-        return userInfoService.getUserInfoList();
+        return userInfoService.getAllUsers();
     }
 
-    @PutMapping("/add-user")
+    @PostMapping(value = "/add-user", produces = "application/json", consumes = "application/json")
     public String addUsers(@RequestBody UserInfo userInfo) {
         return userInfoService.addUserInfo(userInfo);
+    }
+
+    @DeleteMapping(value = "/delete-user/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userInfoService.deleteUser(id);
+        return "User deleted";
+    }
+
+    @DeleteMapping(value = "/delete-multiple-users")
+    public String deleteMultipleUsers(@RequestBody List<Long> ids) {
+        userInfoService.deleteMultipleUsers(ids);
+        return "Multiple users deleted";
     }
 }

@@ -1,36 +1,77 @@
 package com.apirepo.apibank.service;
 
+import com.apirepo.apibank.model.Address;
+import com.apirepo.apibank.model.Tags;
 import com.apirepo.apibank.model.UserInfo;
-import lombok.Getter;
+import com.apirepo.apibank.repository.TagsRepository;
+import com.apirepo.apibank.repository.UserInfoRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
 public class UserInfoService
 {
-    UserInfo userInfo1 = new UserInfo(1L, "Sid1", "sid1@sid1.com", "1", "address1");
-    UserInfo userInfo2 = new UserInfo(2L, "Sid2", "sid2@sid2.com", "2", "address2");
-    UserInfo userInfo3 = new UserInfo(3L, "Sid3", "sid3@sid3.com", "3", "address3");
-    UserInfo userInfo4 = new UserInfo(4L, "Sid4", "sid4@sid4.com", "4", "address4");
-    @Getter
-    List<UserInfo> userInfoList = new ArrayList<UserInfo>(Arrays.asList(userInfo1, userInfo2, userInfo3, userInfo4));
+    @Autowired
+    private UserInfoRepository userInfoRepository;
+    @Autowired
+    private TagsRepository tagsRepository;
+
+    @PostConstruct
+    public void init() {
+        log.info("Post Construct running:");
+        log.info("Inserting 1 user into the DB:");
+        Tags tags = Tags.builder()
+                .tag_name("tag1")
+                .build();
+        Address address = Address.builder()
+                .city("Hyd")
+                .street("Street1")
+                .state("State1")
+                .build();
+        UserInfo userInfo = UserInfo.builder()
+                .address(address)
+                .tags(Set.of(tags))
+                .email("Email")
+                .name("Sid")
+                .phone("1")
+                .build();
+        userInfoRepository.save(userInfo);
+        log.info("Inserted users into the DB:");
+    }
 
     public UserInfo getUserInfo(Long userId) {
         log.info("Getting User Info basing on the ID: "+userId);
-        return userInfoList.stream()
-                .filter(userInfo -> userInfo.getId().equals(userId))
+        return userInfoRepository.findById(userId).stream()
+                .filter(userInfo -> userInfo.getUser_id().equals(userId))
                 .findFirst().orElse(null);
     }
 
     public String addUserInfo(UserInfo userInfo) {
-        log.info("Adding User Info basing on the ID: "+userInfo.getId());
-        userInfoList.add(userInfo);
+        log.info("Adding User Info basing on the ID: "+userInfo.getUser_id());
+        userInfoRepository.save(userInfo);
         return "User List Updated";
     }
 
+    public List<UserInfo> getAllUsers() {
+        log.info("Getting All User List");
+        return userInfoRepository.findAll();
+    }
+
+    public String deleteUser(Long id) {
+        log.info("Deleting User with ID: "+id);
+        userInfoRepository.deleteById(id);
+        return "User List Deleted";
+    }
+
+    public void deleteMultipleUsers(List<Long> ids) {
+        for(Long id : ids) {
+            log.info("Deleting User with ID: "+id);
+            userInfoRepository.deleteById(id);
+        }
+    }
 }

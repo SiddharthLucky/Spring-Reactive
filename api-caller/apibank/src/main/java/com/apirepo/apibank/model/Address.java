@@ -1,23 +1,27 @@
 package com.apirepo.apibank.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.*;
 
 @Entity
-@Table(name = "ADDRESSINFO")
+@Table(name = "ADDRESS")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddressInfo {
+@Builder
+public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ADDRESS_ID")
     private Long address_id;
+
+    @Column(name = "STREET")
     private String street;
+
+    @Column(name = "CITY")
     private String city;
+
+    @Column(name = "STATE")
     private String state;
 }
