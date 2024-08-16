@@ -5,7 +5,10 @@ import com.microservice.webbuilder.service.BuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user-info")
@@ -19,8 +22,18 @@ public class BuilderController {
         return ResponseEntity.ok(builderService.getUserInfoById(id));
     }
 
-    @PostMapping("/insert-user")
+    @PostMapping(value = "/insert-user", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Mono<String>> insertUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
         return ResponseEntity.ok(builderService.insertUserInfo(userInfoDTO));
+    }
+
+    @GetMapping("all-users")
+    public ResponseEntity<Flux<UserInfoDTO>> getAllUserInfo() {
+        return ResponseEntity.ok(builderService.getAllUserInfo());
+    }
+
+    @DeleteMapping("/delete-user/{id}")
+    public ResponseEntity<Mono<String>> deleteUserInfo(@PathVariable Long id) {
+        return ResponseEntity.ok(builderService.deleteUserInfoById(id));
     }
 }

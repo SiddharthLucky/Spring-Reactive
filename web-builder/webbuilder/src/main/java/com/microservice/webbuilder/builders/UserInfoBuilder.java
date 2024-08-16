@@ -22,7 +22,7 @@ public class UserInfoBuilder {
                 .bodyToMono(UserInfoDTO.class);
     }
 
-    public Flux<UserInfoDTO> getUserInfoByName(String name) {
+    public Flux<UserInfoDTO> getAllUsers() {
         return userInfoWebClient.get()
                 .uri("/all-users")
                 .retrieve()
@@ -32,7 +32,13 @@ public class UserInfoBuilder {
     public Mono<String> addUserInfo(UserInfoDTO userInfoDTO) {
         return userInfoWebClient.post()
                 .uri("/add-user")
-                .exchangeToMono(response -> response.bodyToMono(String.class));
+                .bodyValue(userInfoDTO)
+                .retrieve().bodyToMono(String.class);
     }
 
+    public Mono<String> deleteUserById(Long id) {
+        return userInfoWebClient.delete()
+                .uri("/delete-user/{id}",id)
+                .retrieve().bodyToMono(String.class);
+    }
 }
