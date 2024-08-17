@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Data
@@ -17,8 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "USERINFO")
 @Builder
-public class UserInfo
-{
+public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")

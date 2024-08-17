@@ -8,6 +8,9 @@ import com.apirepo.apibank.repository.UserInfoRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,8 +21,6 @@ public class UserInfoService
 {
     @Autowired
     private UserInfoRepository userInfoRepository;
-    @Autowired
-    private TagsRepository tagsRepository;
 
     @PostConstruct
     public void init() {
@@ -57,21 +58,32 @@ public class UserInfoService
         return "User List Updated";
     }
 
+
     public List<UserInfo> getAllUsers() {
         log.info("Getting All User List");
         return userInfoRepository.findAll();
     }
 
-    public String deleteUser(Long id) {
+    public void deleteUser(Long id) {
         log.info("Deleting User with ID: "+id);
         userInfoRepository.deleteById(id);
-        return "User List Deleted";
     }
 
     public void deleteMultipleUsers(List<Long> ids) {
         for(Long id : ids) {
             log.info("Deleting User with ID: "+id);
             userInfoRepository.deleteById(id);
+        }
+    }
+
+    public UserInfo updateUserInfo(UserInfo userInfo) {
+        log.info("Updating User Info basing on the ID: "+userInfo.getUser_id());
+        Optional<UserInfo> updatedUserInfo = userInfoRepository.findById(userInfo.getUser_id());
+        if(updatedUserInfo.isPresent()) {
+            return userInfoRepository.save(userInfo);
+        }
+        else {
+            return null;
         }
     }
 }

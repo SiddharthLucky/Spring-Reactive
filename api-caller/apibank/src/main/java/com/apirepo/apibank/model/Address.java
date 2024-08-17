@@ -3,6 +3,8 @@ package com.apirepo.apibank.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "ADDRESS")
 @Getter
