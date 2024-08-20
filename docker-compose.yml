@@ -1,0 +1,17 @@
+version "3.8"
+
+services:
+  mysql-mappingops:
+    container_name: mysql_local
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mappingops
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_vol:/var/lib/mysql
+
+  api-caller:
+

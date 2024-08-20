@@ -42,3 +42,14 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.named('jar') {
+	archiveFileName = 'api-caller.jar'  // Set the JAR file name
+	destinationDirectory = file("$buildDir/target") // Set the output directory
+}
+
+// Optional: If you want to disable the bootJar task (to only create the plain JAR)
+tasks.named('bootJar') {
+	enabled = false
+}
+

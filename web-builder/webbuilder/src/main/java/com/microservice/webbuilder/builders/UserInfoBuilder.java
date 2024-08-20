@@ -33,7 +33,15 @@ public class UserInfoBuilder {
         return userInfoWebClient.post()
                 .uri("/add-user")
                 .bodyValue(userInfoDTO)
-                .retrieve().bodyToMono(String.class);
+                .exchangeToMono(clientResponse -> {
+                    if (clientResponse.statusCode().is2xxSuccessful()) {
+                        return clientResponse.bodyToMono(String.class);
+                    } else {
+                        return clientResponse.bodyToMono(String.class)
+              .flatMap(errorBody -> Mono.error(new RuntimeException(
+                                "Failed to add user. Status: " + clientResponse.statusCode().value() + ", Error: " + errorBody)));
+                    }
+                });
     }
 
     public Mono<String> deleteUserById(Long id) {
