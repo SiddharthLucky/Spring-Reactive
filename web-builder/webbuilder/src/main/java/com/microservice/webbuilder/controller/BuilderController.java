@@ -36,4 +36,9 @@ public class BuilderController {
     public ResponseEntity<Mono<String>> deleteUserInfo(@PathVariable Long id) {
         return ResponseEntity.ok(builderService.deleteUserInfoById(id));
     }
+
+    @PutMapping("/update-user")
+    public ResponseEntity<Mono<String>> updateUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
+        return ResponseEntity.ok(builderService.updateUserInfo(userInfoDTO));
+    }
 }

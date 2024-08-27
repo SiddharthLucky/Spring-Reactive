@@ -40,4 +40,10 @@ public class UserInfoController {
         userInfoService.deleteMultipleUsers(ids);
         return "Multiple users deleted";
     }
+
+    @PutMapping(value = "/update-user", consumes = "application/json", produces = "application/json")
+    public String updateUser(@RequestBody UserInfo userInfo) {
+        userInfoService.updateUserInfo(userInfo);
+        return "User updated and saved to DB.";
+    }
 }

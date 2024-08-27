@@ -47,4 +47,10 @@ public class BuilderService {
         log.info("Deleting user id {}", id);
         return userInfoBuilder.deleteUserById(id);
     }
+
+    @CacheEvict(value = "app_user", key = "#userid")
+    public Mono<String> updateUserInfo(UserInfoDTO userInfoDTO) {
+        log.info("updating the user with id: "+userInfoDTO.getUser_id());
+        return userInfoBuilder.updateUserById(userInfoDTO);
+    }
 }

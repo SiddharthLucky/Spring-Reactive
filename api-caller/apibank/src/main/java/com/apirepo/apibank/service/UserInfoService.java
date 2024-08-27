@@ -21,6 +21,8 @@ public class UserInfoService
 {
     @Autowired
     private UserInfoRepository userInfoRepository;
+    @Autowired
+    private TagsRepository tagsRepository;
 
     @PostConstruct
     public void init() {
@@ -76,14 +78,24 @@ public class UserInfoService
         }
     }
 
-    public UserInfo updateUserInfo(UserInfo userInfo) {
+    public void updateUserInfo(UserInfo userInfo) {
         log.info("Updating User Info basing on the ID: "+userInfo.getUser_id());
         Optional<UserInfo> updatedUserInfo = userInfoRepository.findById(userInfo.getUser_id());
         if(updatedUserInfo.isPresent()) {
-            return userInfoRepository.save(userInfo);
+            for(Tags tag : userInfo.getTags()) {
+                log.info("Updating the tags before user info");
+                Optional<Tags> updatedTag = tagsRepository.findById(tag.getTag_id());
+                if(updatedTag.isPresent()) {
+                    tag.setTag_name(updatedTag.get().getTag_name());
+                    tagsRepository.save(tag);
+                    log.info("Updating the tag included in the user tag: "+tag.getTag_id());
+                }
+            }
+            userInfoRepository.save(userInfo);
+            log.info("Updated User Info basing on the ID: "+userInfo.getUser_id());
         }
         else {
-            return null;
+            log.info("User not updated.");
         }
     }
 }
