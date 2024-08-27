@@ -8,9 +8,6 @@ import com.apirepo.apibank.repository.UserInfoRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -79,22 +76,42 @@ public class UserInfoService
     }
 
     public void updateUserInfo(UserInfo userInfo) {
-        log.info("Updating User Info basing on the ID: "+userInfo.getUser_id());
+        log.info("Updating User Info basing on the ID: " + userInfo.getUser_id());
         Optional<UserInfo> updatedUserInfo = userInfoRepository.findById(userInfo.getUser_id());
-        if(updatedUserInfo.isPresent()) {
-            for(Tags tag : userInfo.getTags()) {
-                log.info("Updating the tags before user info");
-                Optional<Tags> updatedTag = tagsRepository.findById(tag.getTag_id());
-                if(updatedTag.isPresent()) {
-                    tag.setTag_name(updatedTag.get().getTag_name());
-                    tagsRepository.save(tag);
-                    log.info("Updating the tag included in the user tag: "+tag.getTag_id());
+        if (updatedUserInfo.isPresent()) {
+            UserInfo existingUserInfo = updatedUserInfo.get();
+
+            // Update basic user information (name, email, phone)
+            existingUserInfo.setName(userInfo.getName());
+            existingUserInfo.setEmail(userInfo.getEmail());
+            existingUserInfo.setPhone(userInfo.getPhone());
+
+            // Update address
+            if (userInfo.getAddress() != null) {
+                existingUserInfo.getAddress().setStreet(userInfo.getAddress().getStreet());
+                existingUserInfo.getAddress().setCity(userInfo.getAddress().getCity());
+                existingUserInfo.getAddress().setState(userInfo.getAddress().getState());
+            }
+
+            // Update tags using a combination of both approaches
+            Set<Tags> updatedTags = new HashSet<>();
+            for (Tags tag : userInfo.getTags()) {
+                if (tag.getTag_name() != null) {
+                    // Create new Tags with updated name
+                    updatedTags.add(new Tags(tag.getTag_id(), tag.getTag_name()));
+                } else {
+                    // Keep existing tag if no update provided
+                    updatedTags.add(tag);
                 }
             }
-            userInfoRepository.save(userInfo);
-            log.info("Updated User Info basing on the ID: "+userInfo.getUser_id());
-        }
-        else {
+
+            // Associate the updated tags with the existing UserInfo
+            existingUserInfo.getTags().clear();
+            existingUserInfo.getTags().addAll(updatedTags);
+
+            userInfoRepository.save(existingUserInfo);
+            log.info("Updated User Info basing on the ID: " + userInfo.getUser_id());
+        } else {
             log.info("User not updated.");
         }
     }
